@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseScope — Electronics Device Test Lab</title>
+    <meta name="description" content="PulseScope: tarayıcı tabanlı elektronik cihaz ve donanım test laboratuvarı — mouse, klavye, gamepad, ekran, kamera, ses, ağ ve GPU.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https:; media-src 'self' blob:; base-uri 'self'; frame-ancestors 'none'; object-src 'none'">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(self), geolocation=()">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="bgParticleCanvas" class="bg-particle-canvas"></canvas>
+    <div class="rgb-top-bar"></div>
+
+    <div class="app-container">
+        <aside class="sidebar glass-panel">
+            <div class="brand">
+                <div class="brand-logo"><span class="logo-icon">⚡</span></div>
+                <div class="brand-text">
+                    <h1>PULSE<span>SCOPE</span> <small class="pro-tag">DEVICE LAB</small></h1>
+                    <span class="brand-sub">Device Lab</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-category-title">📊 GENEL & AI</div>
+                <button class="nav-item active" data-tab="dashboard"><span class="nav-icon">🏠</span><span class="nav-label">Gösterge Paneli</span></button>
+                <button class="nav-item" data-tab="system"><span class="nav-icon">🔋</span><span class="nav-label">Sistem & Batarya</span></button>
+
+                <div class="nav-category-title">🕹️ GİRİŞ DONANIMLARI</div>
+                <button class="nav-item" data-tab="mouse"><span class="nav-icon">🖱️</span><span class="nav-label">Mouse & DPI Ölçer</span></button>
+                <button class="nav-item" data-tab="keyboard"><span class="nav-icon">⌨️</span><span class="nav-label">Klavye & WPM Arena</span></button>
+                <button class="nav-item" data-tab="gamepad"><span class="nav-icon">🎮</span><span class="nav-label">Gamepad & Titreşim</span></button>
+
+                <div class="nav-category-title">📺 GÖRSEL & EKRAN</div>
+                <button class="nav-item" data-tab="display"><span class="nav-icon">🖥️</span><span class="nav-label">Ekran, Hz & Kalibrasyon</span></button>
+                <button class="nav-item" data-tab="camera"><span class="nav-icon">📷</span><span class="nav-label">WebCam & Kamera</span></button>
+
+                <div class="nav-category-title">🎧 SES & AKUSTİK</div>
+                <button class="nav-item" data-tab="audio"><span class="nav-icon">🔊</span><span class="nav-label">Ses & Burn-in Pink Noise</span></button>
+                <button class="nav-item" data-tab="mic"><span class="nav-icon">🎙️</span><span class="nav-label">Mikrofon Testi</span></button>
+
+                <div class="nav-category-title">🚀 PERFORMANS & AĞ</div>
+                <button class="nav-item" data-tab="network"><span class="nav-icon">🌐</span><span class="nav-label">Ping & Wi-Fi Analiz</span></button>
+                <button class="nav-item" data-tab="benchmark"><span class="nav-icon">⚡</span><span class="nav-label">GPU & VRAM Benchmark</span></button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="themeToggle" class="theme-toggle-btn"><span class="theme-icon">🌙</span><span class="theme-text">Karanlık Mod</span></button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header glass-panel">
+                <div class="page-title-group">
+                    <h2 id="currentPageTitle">Gösterge Paneli</h2>
+                    <p id="currentPageDesc">PulseScope Electronics Device Lab</p>
+                </div>
+                <div class="header-actions">
+                    <div class="lock-indicator" id="kbLockStatus">🔒 Tarayıcı Kilit Koruması: <strong>AKTİF</strong></div>
+                    <button id="exportReportBtn" class="btn btn-primary"><span>📄 Donanım Raporu & QR Kod</span></button>
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="stat-card card-mouse glass-card"><div class="stat-header"><span class="stat-icon">🖱️</span><h3>Mouse & DPI</h3></div><div class="stat-body"><div class="stat-value" id="dashMouseStatus">Test Edilmedi</div><p class="stat-detail">Double-click, Hz ve DPI tahmini.</p></div></div>
+                    <div class="stat-card card-keyboard glass-card"><div class="stat-header"><span class="stat-icon">⌨️</span><h3>Klavye & WPM</h3></div><div class="stat-body"><div class="stat-value" id="dashKbStatus">Test Edilmedi</div><p class="stat-detail">Key chatter, NKRO ve WPM testi.</p></div></div>
+                    <div class="stat-card card-gamepad glass-card"><div class="stat-header"><span class="stat-icon">🎮</span><h3>Gamepad & Titreşim</h3></div><div class="stat-body"><div class="stat-value" id="dashGamepadStatus">Bekleniyor</div><p class="stat-detail">Stick drift ve motor titreşim testi.</p></div></div>
+                    <div class="stat-card card-display glass-card"><div class="stat-header"><span class="stat-icon">🖥️</span><h3>Ekran & Gamma</h3></div><div class="stat-body"><div class="stat-value" id="dashDisplayStatus">Test Edilmedi</div><p class="stat-detail">Hz, piksel ve renk kalibrasyonu.</p></div></div>
+                </div>
+
+                <div class="panel-card glass-card ai-advisor-card">
+                    <div class="panel-header"><h3>🤖 PulseScope AI Cihaz Sağlık Danışmanı</h3><span class="badge badge-ai">AI ENGINE ACTIVE</span></div>
+                    <div class="panel-body"><div class="ai-box"><div class="ai-avatar">🤖</div><div class="ai-speech" id="aiAdviceText">Donanımlarınızı analiz etmek için modülleri kullanın. Algılanan arızalara göre otomatik bakım ve parça önerileri üreteceğim.</div></div></div>
+                </div>
+
+                <div class="panel-card glass-card fault-summary-panel">
+                    <div class="panel-header"><h3>⚠️ Algılanan Donanım Arızaları</h3><span class="badge" id="faultCountBadge">0 Arıza</span></div>
+                    <div class="panel-body"><ul id="faultList" class="fault-list"><li class="no-faults">Henüz hiçbir donanım arızası tespit edilmedi.</li></ul></div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SYSTEM & BATTERY -->
+            <section id="tab-system" class="tab-content">
+                <div class="panel-card glass-card">
+                    <div class="panel-header"><h3>🔋 Laptop Batarya & Güç Durumu (Battery Status API)</h3></div>
+                    <div class="panel-body">
+                        <div class="metrics-row">
+                            <div class="metric-box"><span class="m-label">Batarya Seviyesi</span><span class="m-val" id="batteryLevelVal">%--</span></div>
+                            <div class="metric-box"><span class="m-label">Şarj Durumu</span><span class="m-val" id="batteryChargingVal">--</span></div>
+                            <div class="metric-box"><span class="m-label">Kalan Süre</span><span class="m-val" id="batteryTimeVal">-- min</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: MOUSE & DPI -->
+            <section id="tab-mouse" class="tab-content">
+                <div class="test-layout">
+                    <div class="panel-card glass-card">
+                        <div class="panel-header"><h3>1. Tuş & Double-Click Arıza Tespiti</h3></div>
+                        <div class="panel-body">
+                            <div id="mouseClickArea" class="mouse-interactive-area">
+                                <div class="click-prompt"><span class="mouse-icon-lg">🖱️</span><p>Tıklayın (Sağ, Sol, Orta, Yan 1/2)</p><small>Çift Tıklama Eşiği: <strong>< 80 ms</strong></small></div>
+                                <div class="mouse-buttons-visual"><div class="m-btn btn-left" id="mBtnLeft">Sol Tuş</div><div class="m-btn btn-middle" id="mBtnMiddle">Orta</div><div class="m-btn btn-right" id="mBtnRight">Sağ Tuş</div><div class="m-btn btn-side1" id="mBtnSide1">Yan 1</div><div class="m-btn btn-side2" id="mBtnSide2">Yan 2</div></div>
+                            </div>
+                            <div class="metrics-row">
+                                <div class="metric-box"><span class="m-label">Toplam Tıklama</span><span class="m-val" id="totalClicksVal">0</span></div>
+                                <div class="metric-box"><span class="m-label">Son Tıklama Aralığı</span><span class="m-val" id="lastClickIntervalVal">0 ms</span></div>
+                                <div class="metric-box warning-box"><span class="m-label">Double-Click Arızası</span><span class="m-val" id="doubleClickCountVal">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card glass-card">
+                        <div class="panel-header"><h3>2. Polling Rate (Hz) & Real DPI Estimator</h3></div>
+                        <div class="panel-body">
+                            <div id="mouseMoveArea" class="mouse-interactive-area move-area">
+                                <p>Farenizi hızlıca hareket ettirin</p>
+                                <div class="radial-gauge-container"><div class="gauge-circle"><div class="gauge-value" id="currentHzVal">0</div><div class="gauge-unit">Hz</div></div></div>
+                                <div id="hzStatusBadge" class="badge">Analiz Ediliyor...</div>
+                            </div>
+                            <div class="scroll-test-container">
+                                <h4>Scroll (Tekerlek Ters Yön Atlama) Testi</h4>
+                                <div id="scrollArea" class="scroll-box"><span>Tekerleği Kaydırın</span><div class="scroll-indicators"><span id="scrollUpInd">▲ Yukarı</span><span id="scrollDownInd">▼ Aşağı</span></div></div>
+                                <div id="scrollJumpAlert" class="alert-box hidden">⚠️ Scroll Jump Arızası Tespiti!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: KEYBOARD & WPM -->
+            <section id="tab-keyboard" class="tab-content">
+                <div class="keyboard-controls">
+                    <div class="kb-metrics">
+                        <div class="metric-box"><span class="m-label">Aktif Basılı Tuş (NKRO)</span><span class="m-val" id="pressedKeysCount">0</span></div>
+                        <div class="metric-box"><span class="m-label">Son Tuş Basım Süresi</span><span class="m-val" id="kbHoldDurationVal">0 ms</span></div>
+                        <div class="metric-box warning-box"><span class="m-label">Key Chatter Arızası</span><span class="m-val" id="chatterCountVal">0</span></div>
+                    </div>
+                    <div class="kb-actions">
+                        <select id="switchSoundSelect" class="select-input"><option value="none">🔇 Switch Sesi: Kapalı</option><option value="blue" selected>🔊 Blue Switch (Clicky)</option><option value="red">🔊 Red Switch (Linear)</option></select>
+                        <button id="resetKbBtn" class="btn btn-secondary">Klavyeyi Sıfırla</button>
+                    </div>
+                </div>
+
+                <div class="panel-card glass-card kb-panel">
+                    <div class="panel-header"><h3>Tam Boy %100 Sanal Klavye Haritası (Numpad Dahil)</h3><span class="badge badge-success">🔒 F5 / Tab / Alt / Win Kilitli</span></div>
+                    <div class="panel-body"><div class="keyboard-full-container" id="virtualKeyboard"></div></div>
+                </div>
+            </section>
+
+            <!-- TAB 5: GAMEPAD & VIBRATION -->
+            <section id="tab-gamepad" class="tab-content">
+                <div class="panel-card glass-card">
+                    <div class="panel-header"><h3>🎮 Gamepad Stick Drift & Titreşim Motoru Testi</h3><span class="badge" id="gamepadConnectBadge">Bağlantı Bekleniyor...</span></div>
+                    <div class="panel-body">
+                        <div class="gamepad-visual-container">
+                            <div class="stick-test-box"><h4>Sol Analog Çubuk (Left Stick)</h4><div class="stick-canvas-wrap"><div id="leftStickDot" class="stick-dot"></div></div><span id="leftStickPosVal" class="stick-val-readout">X: 0.00 | Y: 0.00</span></div>
+                            <div class="stick-test-box"><h4>Sağ Analog Çubuk (Right Stick)</h4><div class="stick-canvas-wrap"><div id="rightStickDot" class="stick-dot"></div></div><span id="rightStickPosVal" class="stick-val-readout">X: 0.00 | Y: 0.00</span></div>
+                        </div>
+                        <button id="testVibrationBtn" class="btn btn-primary btn-block" style="margin-top: 16px;">📳 Gamepad Titreşim Motorunu Test Et</button>
+                        <div id="gamepadDriftAlert" class="alert-box hidden">⚠️ Stick Drift Arızası Tespiti!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: DISPLAY & CALIBRATION -->
+            <section id="tab-display" class="tab-content">
+                <div class="test-layout">
+                    <div class="panel-card glass-card">
+                        <div class="panel-header"><h3>🖥️ Ekran Yenileme Hızı (Hz / FPS)</h3></div>
+                        <div class="panel-body text-center">
+                            <div class="hz-display-lg"><span id="detectedDisplayHz">0</span> <small>Hz</small></div>
+                            <p class="section-desc" id="hzAssessmentText">Kare hızı ölçülüyor...</p>
+                        </div>
+                    </div>
+                    <div class="panel-card glass-card">
+                        <div class="panel-header"><h3>⬛ Ölü Piksel Taraması</h3></div>
+                        <div class="panel-body"><button id="startDeadPixelTestBtn" class="btn btn-primary btn-block">🔍 Tam Ekran Ölü Piksel Taraması</button></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 7: WEBCAM -->
+            <section id="tab-camera" class="tab-content">
+                <div class="panel-card glass-card">
+                    <div class="panel-header"><h3>📷 WebCam Kamera Çözünürlük & FPS</h3><span class="badge" id="camStatusBadge">Kamera Kapalı</span></div>
+                    <div class="panel-body">
+                        <div class="camera-controls"><button id="startCamBtn" class="btn btn-primary">📷 Başlat</button><button id="stopCamBtn" class="btn btn-danger" disabled>Durdur</button></div>
+                        <div class="camera-preview-wrap"><video id="webcamVideo" autoplay playsinline class="cam-video"></video><div class="cam-info-overlay" id="camInfoOverlay"><span>Çözünürlük: <strong id="camResReadout">0x0</strong></span><span>FPS: <strong id="camFpsReadout">0</strong></span></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 8: AUDIO & PINK NOISE -->
+            <section id="tab-audio" class="tab-content">
+                <div class="test-layout">
+                    <div class="panel-card glass-card">
+                        <div class="panel-header"><h3>1. Kanal & 8D Ses Sahnesi</h3></div>
+                        <div class="panel-body">
+                            <div class="audio-controls-grid"><button id="playLeftAudio" class="btn btn-audio">🔊 Sol</button><button id="playRightAudio" class="btn btn-audio">🔊 Sağ</button><button id="playCenterAudio" class="btn btn-audio">🎧 Merkez</button></div>
+                            <hr class="divider">
+                            <div class="spatial-demo"><div class="head-simulator"><div class="head-node">👤</div><div class="sound-orbit" id="soundOrbitNode">🔔</div></div><button id="toggle8DAudio" class="btn btn-primary btn-block">🔄 8D Simülasyonu</button></div>
+                        </div>
+                    </div>
+                    <div class="panel-card glass-card">
+                        <div class="panel-header"><h3>2. Sub-Bass & Burn-in Pink Noise</h3></div>
+                        <div class="panel-body">
+                            <button id="playSubBassBtn" class="btn btn-warning btn-block" style="margin-bottom: 12px;">🔊 Sub-Bass Tonu (40Hz)</button>
+                            <button id="playPinkNoiseBtn" class="btn btn-secondary btn-block">📻 Kulaklık Burn-in Pink Noise Çal</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 9: MIC -->
+            <section id="tab-mic" class="tab-content">
+                <div class="panel-card glass-card">
+                    <div class="panel-header"><h3>🎙️ Canlı Mikrofon Giriş & Dip Gürültü</h3></div>
+                    <div class="panel-body">
+                        <div class="mic-controls"><button id="startMicBtn" class="btn btn-primary">🎙️ Başlat</button><button id="stopMicBtn" class="btn btn-danger" disabled>Durdur</button></div>
+                        <div class="mic-visualizer-container"><div class="mic-volume-bar-wrap"><span>Giriş Seviyesi (dB)</span><div class="volume-bar-bg"><div id="micVolumeLevel" class="volume-bar-fill"></div></div><span id="micDbReadout">- ∞ dB</span></div><canvas id="micWaveformCanvas" class="mic-canvas" width="700" height="150"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 10: NETWORK -->
+            <section id="tab-network" class="tab-content">
+                <div class="panel-card glass-card">
+                    <div class="panel-header"><h3>🌐 Ağ & E-Spor Ping Latency</h3><button id="startNetworkTestBtn" class="btn btn-primary">🌐 Ping Testini Başlat</button></div>
+                    <div class="panel-body">
+                        <div class="ping-servers-grid">
+                            <div class="ping-card"><span class="server-title">🇹🇷 Istanbul</span><span class="ping-val" id="pingIstanbulVal">-- ms</span></div>
+                            <div class="ping-card"><span class="server-title">🇩🇪 Frankfurt</span><span class="ping-val" id="pingFrankfurtVal">-- ms</span></div>
+                            <div class="ping-card"><span class="server-title">🇬🇧 London</span><span class="ping-val" id="pingLondonVal">-- ms</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 11: BENCHMARK & VRAM -->
+            <section id="tab-benchmark" class="tab-content">
+                <div class="panel-card glass-card">
+                    <div class="panel-header"><h3>⚡ WebGL GPU 3D Stres & VRAM Testi</h3><span class="badge" id="gpuScoreBadge">Skor: --</span></div>
+                    <div class="panel-body">
+                        <button id="startGpuBenchBtn" class="btn btn-primary" style="margin-bottom: 16px;">🚀 Stres Testini Başlat</button>
+                        <div class="benchmark-canvas-wrap"><canvas id="gpuBenchCanvas" width="700" height="250" class="gpu-canvas"></canvas></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Dead Pixel Overlay & Printable Modal -->
+    <div id="deadPixelOverlay" class="dead-pixel-overlay hidden"><div class="dead-pixel-hint">Rengi Değiştirmek İçin Tıklayın | ESC ile Çıkın</div></div>
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <div class="modal-header"><h2>📋 PulseScope Donanım Raporu</h2><button class="close-modal-btn" id="closeModalBtn">&times;</button></div>
+            <div class="modal-body" id="reportPrintArea">
+                <div class="report-brand"><h3>PULSESCOPE HARDWARE REPORT</h3><small id="reportDate"></small></div><hr>
+                <div class="report-section"><h4>🖱️ Mouse Test</h4><p id="repMouseText"></p></div>
+                <div class="report-section"><h4>⌨️ Klavye Test</h4><p id="repKbText"></p></div>
+                <div class="report-section"><h4>🎮 Gamepad Test</h4><p id="repGamepadText"></p></div>
+                <div class="report-section"><h4>🖥️ Ekran & Hz</h4><p id="repDisplayText"></p></div>
+                <div class="report-section"><h4>🤖 AI Donanım Tavsiyesi</h4><p id="repAiAdviceText"></p></div>
+                <div class="report-section"><h4>⚠️ Arıza Kayıtları</h4><ul id="repFaultList"></ul></div>
+                <div class="qr-code-section" style="text-align: center; margin-top: 20px;"><h4>📱 Rapor Kimliği</h4><div id="qrCodeContainer" class="qr-box"></div></div>
+            </div>
+            <div class="modal-footer"><button onclick="window.print()" class="btn btn-primary">🖨️ Yazdır / PDF</button></div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/mouse-test.js"></script>
+    <script src="js/keyboard-test.js"></script>
+    <script src="js/gamepad-test.js"></script>
+    <script src="js/display-test.js"></script>
+    <script src="js/camera-test.js"></script>
+    <script src="js/network-test.js"></script>
+    <script src="js/gpu-benchmark.js"></script>
+    <script src="js/audio-test.js"></script>
+</body>
+</html>
