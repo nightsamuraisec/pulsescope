@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+node_modules/
+*.log
+
+# stray root captures
+/[0-9].png
+
+# runtime captures (keep README shots)
+screenshot/*.tmp
+screenshot/QR_Capture_*.png
+screenshot/generated_qr.png
